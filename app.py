@@ -75,3 +75,29 @@ def view_inventory():
 
     utensils = cursor.fetchall()
     return render_template('inventory.html', utensils=utensils, search_query=search_query)
+
+
+@app.route('/edit/<int:id>', methods=['GET'])
+def edit_item(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM kitchen_utensils WHERE id = %s", (id,))
+    utensil = cursor.fetchone()
+    return render_template('update.html', utensil=utensil)
+
+
+@app.route('/update/<int:id>', methods=['POST'])
+def update_item(id):
+    Item_name = request.form['Item_name']
+    Material = request.form['Material']
+    Quantity = request.form['Quantity']
+    Sales_price = request.form['Sales_price']
+    Purchase_price = request.form['Purchase_price']
+
+    cursor = mysql.connection.cursor()
+    cursor.execute("""
+        UPDATE kitchen_utensils
+        SET Item_name = %s, Material = %s, Quantity = %s, Sales_price = %s, Purchase_price = %s
+        WHERE id = %s
+    """, (Item_name, Material, Quantity, Sales_price, Purchase_price, id))
+    mysql.connection.commit()
+    return redirect(url_for('view_inventory'))
