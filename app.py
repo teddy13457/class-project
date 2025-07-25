@@ -34,3 +34,24 @@ def dashboard():
         low_stock_count=low_stock_count,
         recent_items=recent_items
     )
+    @app.route('/create')
+def create_page():
+    return render_template('create.html')
+
+
+@app.route('/add', methods=['POST'])
+def add_utensil():
+    if request.method == "POST":
+        Item_name = request.form['Item_name']
+        Material = request.form['Material']
+        Quantity = request.form['Quantity']
+        Sales_price = request.form['Sales_price']
+        Purchase_price = request.form['Purchase_price']
+
+        cursor = mysql.connection.cursor()
+        cursor.execute(
+            "INSERT INTO kitchen_utensils (Item_name, Material, Quantity, Sales_price, Purchase_price) VALUES (%s, %s, %s, %s, %s)",
+            (Item_name, Material, Quantity, Sales_price, Purchase_price))
+
+        mysql.connection.commit()
+        return redirect(url_for('dashboard'))
