@@ -58,3 +58,20 @@ def add_utensil():
 
         mysql.connection.commit()
         return redirect(url_for('dashboard'))
+
+
+@app.route('/inventory')
+def view_inventory():
+    search_query = request.args.get('search', '')
+
+    cursor = mysql.connection.cursor()
+
+    if search_query:
+        query = "SELECT * FROM kitchen_utensils WHERE Item_name LIKE %s"
+        cursor.execute(query, ('%' + search_query + '%',))
+    else:
+        query = "SELECT * FROM kitchen_utensils"
+        cursor.execute(query)
+
+    utensils = cursor.fetchall()
+    return render_template('inventory.html', utensils=utensils, search_query=search_query)
