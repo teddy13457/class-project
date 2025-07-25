@@ -34,6 +34,9 @@ def dashboard():
         low_stock_count=low_stock_count,
         recent_items=recent_items
     )
+
+
+    
     @app.route('/create')
 def create_page():
     return render_template('create.html')
