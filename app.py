@@ -101,3 +101,32 @@ def update_item(id):
     """, (Item_name, Material, Quantity, Sales_price, Purchase_price, id))
     mysql.connection.commit()
     return redirect(url_for('view_inventory'))
+
+
+@app.route('/update')
+def update_list():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM kitchen_utensils")
+    utensils = cursor.fetchall()
+    return render_template('update_list.html', utensils=utensils)
+
+@app.route('/delete')
+def delete_page():
+    cursor = mysql.connection.cursor()
+    cursor.execute("SELECT * FROM kitchen_utensils")
+    utensils = cursor.fetchall()
+    cursor.close()
+    return render_template('delete.html', utensils=utensils)
+
+
+@app.route('/delete<int:id>', methods=['POST'])
+def delete_utensil(id):
+    cursor = mysql.connection.cursor()
+    cursor.execute('DELETE FROM kitchen_utensils WHERE id = %s', (id,))
+    mysql.connection.commit()
+    cursor.close()
+    return redirect(url_for('view_inventory'))
+
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
